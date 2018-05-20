@@ -1,0 +1,109 @@
+﻿@{
+    ViewBag.Title = "Text Analyzer";
+}
+
+
+    <div class="jumbotron">
+        <h1>Machine Learning - Text Analytics </h1>
+        <p class="lead">
+            Identify the language, sentiment, key phrases and entities
+        </p>
+        <table>
+            <tr>
+                <td>
+                    <p>
+                        <textarea id="textareaInput" data-val="true" data-val-maxlength="Input Text size should be less than 5000 characters." data-val-maxlength-max="5000" data-val-required="Please enter text." id="text-analytics-demo" name="Query" placeholder="type here..." rows="2">I had a wonderful talk on Machine Learning. Enjoyed seeing the demos!</textarea>
+                    </p>
+                    <p><button id ="btnAnalyze" onclick="Analyze()" class="btn btn-primary btn-lg">Analysing &raquo;</button></p>
+                </td>
+                <td>
+                    <table class="no-border">
+                        <tr>
+                            <th>
+                                <span>Detected language: </span>
+                            </th>
+                            <td><span id="divLanguage"><br></td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <span>Sentiments: </span>
+                            </th>
+                            <td><span id="divSentiments"><br></td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <span>Key Phrases: </span>
+                            </th>
+                            <td><span id="divPhrases"><br></td>
+                        </tr>
+
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Sentiment Analysis</h2>
+            <p>
+                Scores close to 1 indicate a positive sentiment, and scores close to 0 indicate a negative sentiment.
+                The sentiment score is generated using classification techniques. The input features of the classifier
+                include n-grams, features generated from part-of-speech tags and word embeds.
+            </p>
+            <p><a class="btn btn-default" href="https://docs.microsoft.com/en-gb/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-sentiment-analysis">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>
+                Key phrase extraction
+            </h2>
+            <p>
+                list of strings denoting the key talking points in the input text.
+                Employes techniques from Microsoft Office’s sophisticated Natural Language Processing toolkit.
+                English, German, Spanish and Japanese text is supported.
+            </p>
+            <p><a class="btn btn-default" href="https://docs.microsoft.com/en-gb/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-language-detection">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>
+                Language detection
+            </h2>
+            <p>
+                detected language and a numeric score between 0 and 1.
+                Scores close to 1 indicate with 100% certainty that the identified language is true.
+                A total of 120 languages are supported.
+            </p>
+            <p><a class="btn btn-default" href="https://docs.microsoft.com/en-gb/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-language-detection">Learn more &raquo;</a></p>
+        </div>
+    </div>
+
+    <script>
+
+        function Analyze() {
+
+            var requestData = {
+
+                inputData: $.trim($('#textareaInput').val())
+            };
+            $('#btnAnalyze').text("working");
+            $.ajax({
+                url: '/Home/RunAnalytics',
+                type: 'POST',
+                data: JSON.stringify(requestData),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                error: function (xhr) {
+                    alert('Error: ' + xhr.statusText);
+                    $('#btnAnalyze').text("Analysing");
+                },
+                success: function (result) {
+                    $('#btnAnalyze').text("Analysing");
+                    $('#divLanguage').text(result.language);
+                    $('#divSentiments').text(result.sentiments);
+                    $('#divPhrases').text(result.phrases);
+                },
+                async: true,
+                processData: false
+            });
+        }
+    </script>
